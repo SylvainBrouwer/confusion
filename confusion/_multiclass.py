@@ -1,4 +1,4 @@
 from ._base import BaseConfusionMatrix
 
-class MultiClassConfusionMatrix:
+class MultiClassConfusionMatrix(BaseConfusionMatrix):
     pass

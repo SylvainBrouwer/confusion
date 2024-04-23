@@ -1,51 +1,65 @@
-class BaseConfusionMatrix:
+from abc import ABC, abstractmethod
 
-    def __init__(self):
-        pass
+class BaseConfusionMatrix(ABC):
 
     #Properties
+    @property
+    @abstractmethod
     def TP(self):
         pass
 
+    @property
+    @abstractmethod
     def FP(self):
         pass
 
+    @property
+    @abstractmethod
     def TN(self):
         pass
 
+    @property
+    @abstractmethod
     def FN(self):
         pass
 
-    # Metrics
+    # Base metrics
+    @abstractmethod
     def precision(self):
         pass
 
+    @abstractmethod
     def recall(self):
         pass
 
+    @abstractmethod
     def specificity(self):
         pass
 
+    @abstractmethod
     def NPV(self):
         pass
 
+    # Dependent metrics
+    @abstractmethod
     def f_beta(self, beta):
         pass
 
+    @abstractmethod
     def accuracy(self):
         pass
 
     def FDR(self):
-        return 1 - self.precision()
+        pass
     
     def FNR(self):
-        return 1 - self.recall()
+        pass
 
     def FOR(self):
-        return 1 - self.NPV()
+        pass
     
     def FPR(self):
-        return 1 - self.specificity()
+        pass
 
     # Metric aliases
     def f_1(self):
