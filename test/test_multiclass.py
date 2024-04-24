@@ -45,4 +45,15 @@ class TestMultiClass:
         print(conf.precision())
         print(conf.recall())
         print(conf.f_beta(1))
+        print(conf.FNR())
+
+
+    def test_print(self):
+        conf = MultiClassConfusionMatrix(self.y_true, self.y_pred, classnames=["cat", "dog", "bird"])
+        print(conf)
+
+
+    def test_plot(self):
+        conf = MultiClassConfusionMatrix(self.y_true, self.y_pred, classnames=["cat", "dog", "bird"])
+        conf.plot()
         

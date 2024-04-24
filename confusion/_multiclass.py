@@ -13,6 +13,10 @@ class MultiClassConfusionMatrix(BaseConfusionMatrix):
         y_pred = _convert_to_bool_np(y_pred)
         self.nclasses = y_true.shape[1]
 
+        self.classnames = classnames
+        if self.classnames == None:
+            self.classnames = list(range(self.nclasses))
+
         if y_true.shape != y_pred.shape:
             raise ValueError("Inputs must have the same shape.")
         if (y_true.sum(axis=1) != 1).any() or (y_pred.sum(axis=1) != 1).any():
@@ -20,7 +24,6 @@ class MultiClassConfusionMatrix(BaseConfusionMatrix):
         if len(classnames) != self.nclasses:
             raise ValueError("Number of provided class names does not match number of classes.")
         
-
         self.matrix = np.zeros((self.nclasses, self.nclasses), dtype=int)
         trues = np.where(y_true == 1)[1]
         for true, pred in zip(trues, y_pred):
@@ -110,50 +113,50 @@ class MultiClassConfusionMatrix(BaseConfusionMatrix):
             )
         return np.array([self.f_beta(beta, cls=c) for c in range(self.nclasses)], dtype=float)
     
-    # Not correct from here on
 
-    def FDR(self):
-        return 1 - self.precision()
+    def FDR(self, cls=None):
+        return 1 - self.precision(cls=cls)
     
-    def FNR(self):
-        return 1 - self.recall()
+    def FNR(self, cls=None):
+        return 1 - self.recall(cls=cls)
 
-    def FOR(self):
-        return 1 - self.NPV()
+    def FOR(self, cls=None):
+        return 1 - self.NPV(cls=cls)
     
-    def FPR(self):
-        return 1 - self.specificity()
+    def FPR(self, cls=None):
+        return 1 - self.specificity(cls=cls)
     
     # Printing
     def __repr__(self) -> str:
         table = PrettyTable(header=False, border=True, hrules=ALL)
-        table.add_row(["", f"{self.classnames[0]} true", f"{self.classnames[1]} true"])
-        table.add_row([f"{self.classnames[0]} predicted", self.TP, self.FP])
-        table.add_row([f"{self.classnames[1]} predicted", self.FN, self.TN])
+        header = [""] + [f"{name} predicted" for name in self.classnames]
+        table.add_row(header)
+        for idx, name in enumerate(self.classnames):
+            row = [f"{name} true"] + list(self.matrix[idx])
+            table.add_row(row)
         return "\n"+table.get_string()
     
     # Plotting
     def plot(self):
-        table_T = np.array([[self.TP, 0], [0, self.TN]])
-        table_F = np.array([[0, self.FP], [self.FN, 0]])
-        cmap_T = plt.get_cmap("Greens")
-        cmap_F = plt.get_cmap("Reds")
-        mask =  np.array([[True, False],[False, True]])
+        table_green = np.diag(self.TP())
+        table_red = self.matrix
+        cmap_green = plt.get_cmap("Greens")
+        cmap_red = plt.get_cmap("Reds")
         ax = sns.heatmap(
-            data=table_T,
+            data=table_green,
             vmin=0, 
             annot=True, 
-            cmap=cmap_T,
+            cmap=cmap_green,
             cbar=False,
             linewidth=1, 
             )
         sns.heatmap(
-            data=table_F,
+            data=table_red,
             vmin=0,
             annot=True,
-            cmap=cmap_F,
+            cmap=cmap_red,
             cbar=False,
-            mask=mask,
+            mask=table_green.astype(bool),
             linewidth=1,
             ax=ax
         )
@@ -161,6 +164,6 @@ class MultiClassConfusionMatrix(BaseConfusionMatrix):
         ax.xaxis.set_ticklabels(labels=self.classnames)
         ax.xaxis.set_label_position("top")
         ax.yaxis.set_ticklabels(labels=self.classnames, rotation="horizontal")
-        ax.set_xlabel("True")
-        ax.set_ylabel("Predicted")
+        ax.set_xlabel("Predicted")
+        ax.set_ylabel("True")
         plt.show()
