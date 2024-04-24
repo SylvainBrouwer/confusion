@@ -43,13 +43,13 @@ class MultiClassConfusionMatrix(BaseConfusionMatrix):
     def FP(self, cls=None):
         if cls is not None:
             return self.matrix[:, cls].sum() - self.TP(cls=cls)
-        return np.array([self.FN(cls=c) for c in range(self.nclasses)])    
+        return np.array([self.FP(cls=c) for c in range(self.nclasses)])    
 
 
     def FN(self, cls=None):
         if cls is not None:
             return self.matrix[cls, :].sum() - self.TP(cls=cls)
-        return np.array([self.FP(cls=c) for c in range(self.nclasses)])
+        return np.array([self.FN(cls=c) for c in range(self.nclasses)])
     
     
     # Base metrics
