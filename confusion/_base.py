@@ -1,24 +1,26 @@
 from abc import ABC, abstractmethod
+import numpy as np
+
+
+def _convert_to_bool_np(input):
+    if isinstance(input, (list, np.ndarray)):
+        return np.array(input, dtype=bool)
 
 class BaseConfusionMatrix(ABC):
 
     #Properties
-    @property
     @abstractmethod
     def TP(self):
         pass
 
-    @property
     @abstractmethod
     def FP(self):
         pass
 
-    @property
     @abstractmethod
     def TN(self):
         pass
 
-    @property
     @abstractmethod
     def FN(self):
         pass

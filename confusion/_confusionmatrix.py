@@ -2,12 +2,8 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from prettytable import PrettyTable, ALL
-from ._base import BaseConfusionMatrix
+from ._base import BaseConfusionMatrix, _convert_to_bool_np
 
-
-def _convert_to_bool_np(input):
-    if isinstance(input, (list, np.ndarray)):
-        return np.array(input, dtype=bool)
 
 class ConfusionMatrix(BaseConfusionMatrix):
 
