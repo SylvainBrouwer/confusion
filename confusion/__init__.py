@@ -1,3 +1,2 @@
 from ._confusionmatrix import ConfusionMatrix
-from ._multiclass import MultiClassConfusionMatrix
 from ._multilabel import MultiLabelConfusionMatrix

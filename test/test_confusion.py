@@ -1,9 +1,9 @@
 import numpy as np
 import numpy.testing as nptest
 import pytest
-from confusion import MultiClassConfusionMatrix
+from confusion import ConfusionMatrix
 
-class TestMultiClass:
+class TestConfusion:
     
     y_true = np.array([
         [0, 1, 0],
@@ -29,7 +29,7 @@ class TestMultiClass:
 
 
     def test_props(self):
-        conf = MultiClassConfusionMatrix(self.y_true, self.y_pred, classnames=["cat", "dog", "bird"])
+        conf = ConfusionMatrix(self.y_true, self.y_pred, classnames=["cat", "dog", "bird"])
         nptest.assert_array_equal(conf.TP(), np.array([2, 1, 2]))
         nptest.assert_array_equal(conf.TN(), np.array([4, 4, 5]))
         nptest.assert_array_equal(conf.FP(), np.array([1, 1, 1]))
@@ -37,7 +37,7 @@ class TestMultiClass:
     
 
     def test_metrics(self):
-        conf = MultiClassConfusionMatrix(self.y_true, self.y_pred, classnames=["cat", "dog", "bird"])
+        conf = ConfusionMatrix(self.y_true, self.y_pred, classnames=["cat", "dog", "bird"])
         assert conf.precision(cls=0) == pytest.approx(2/3, 0.001)
         assert conf.recall(cls=2) == 1.0
         assert conf.specificity(cls=1) == pytest.approx(4/5, 0.001)
@@ -46,14 +46,9 @@ class TestMultiClass:
         print(conf.recall())
         print(conf.f_beta(1))
         print(conf.FNR())
+    
 
-
-    def test_print(self):
-        conf = MultiClassConfusionMatrix(self.y_true, self.y_pred, classnames=["cat", "dog", "bird"])
-        print(conf)
-
-
-    def test_plot(self):
-        conf = MultiClassConfusionMatrix(self.y_true, self.y_pred, classnames=["cat", "dog", "bird"])
-        conf.plot()
+    def test_csv(self):
+        conf = ConfusionMatrix(self.y_true, self.y_pred, classnames=["cat", "dog", "bird"])
+        conf.to_csv("test.csv")
         
